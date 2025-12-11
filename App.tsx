@@ -174,7 +174,7 @@ const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="text-neutral-700 text-[10px] font-medium uppercase tracking-wider absolute bottom-4 w-full text-center z-10">
-          © {new Date().getFullYear()} Teca Admin • v1.2
+          © {new Date().getFullYear()} Teca Admin • v1.3
         </footer>
       </div>
     </div>
