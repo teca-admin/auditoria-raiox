@@ -1,126 +1,118 @@
+
 "use client";
-import React, { useId, useEffect, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
+import React, { useEffect, useRef } from "react";
 import { cn } from "../lib/utils";
 
-type ParticlesProps = {
+type SparklesProps = {
   id?: string;
   className?: string;
   background?: string;
-  particleSize?: number;
   minSize?: number;
   maxSize?: number;
-  speed?: number;
-  particleColor?: string;
   particleDensity?: number;
+  particleColor?: string;
+  speed?: number;
 };
 
-export const SparklesCore = (props: ParticlesProps) => {
-  const {
-    id,
-    className,
-    background,
-    minSize,
-    maxSize,
-    speed,
-    particleColor,
-    particleDensity,
-  } = props;
-  const [init, setInit] = useState(false);
-  
-  useEffect(() => {
-    // Inicialização silenciosa para não travar o app se falhar
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    })
-    .then(() => setInit(true))
-    .catch((err) => console.error("Particles init error:", err));
-  }, []);
+export const SparklesCore = ({
+  id,
+  className,
+  background,
+  minSize = 0.5,
+  maxSize = 1.5,
+  particleDensity = 100,
+  particleColor = "#FFFFFF"
+}: SparklesProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const generatedId = useId();
-  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationId: number;
+    let particles: Array<{
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      opacity: number;
+    }> = [];
+
+    const init = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      particles = [];
+      // Ajuste de densidade baseado na área da tela
+      const count = particleDensity;
+      
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * (maxSize - minSize) + minSize,
+          speedX: (Math.random() - 0.5) * 0.5, // Velocidade lenta
+          speedY: (Math.random() - 0.5) * 0.5,
+          opacity: Math.random() * 0.5 + 0.5
+        });
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Fundo transparente ou cor definida
+      if (background && background !== "transparent") {
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      particles.forEach((p) => {
+        // Movimento
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        // Resetar posição se sair da tela (efeito infinito)
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        // Desenhar
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = particleColor;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+      });
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    init();
+    animate();
+
+    const handleResize = () => {
+      init();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [minSize, maxSize, particleDensity, particleColor, background]);
+
   return (
-    <div className={cn("transition-opacity duration-1000 ease-in-out", init ? "opacity-100" : "opacity-0", className)}>
-      {init && (
-        <Particles
-          id={id || generatedId}
-          className={cn("h-full w-full")}
-          options={{
-            background: {
-              color: {
-                value: background || "#000000",
-              },
-            },
-            fullScreen: {
-              enable: false,
-              zIndex: 1,
-            },
-            fpsLimit: 120,
-            interactivity: {
-              events: {
-                onClick: {
-                  enable: true,
-                  mode: "push",
-                },
-                onHover: {
-                  enable: false,
-                  mode: "repulse",
-                },
-                resize: true,
-              },
-              modes: {
-                push: {
-                  quantity: 4,
-                },
-                repulse: {
-                  distance: 200,
-                  duration: 0.4,
-                },
-              },
-            },
-            particles: {
-              bounce: {
-                horizontal: { value: 1 },
-                vertical: { value: 1 },
-              },
-              collisions: {
-                enable: false,
-              },
-              color: {
-                value: particleColor || "#ffffff",
-              },
-              move: {
-                enable: true,
-                speed: { min: 0.1, max: 1 },
-                direction: "none",
-                random: false,
-                straight: false,
-                outModes: { default: "out" },
-              },
-              number: {
-                density: { enable: true, width: 400, height: 400 },
-                value: particleDensity || 120,
-              },
-              opacity: {
-                value: { min: 0.1, max: 1 },
-                animation: {
-                  enable: true,
-                  speed: speed || 4,
-                  sync: false,
-                },
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                value: { min: minSize || 1, max: maxSize || 3 },
-              },
-            },
-            detectRetina: true,
-          }}
-        />
-      )}
-    </div>
+    <canvas
+      ref={canvasRef}
+      id={id}
+      className={cn("w-full h-full opacity-100 transition-opacity duration-1000", className)}
+    />
   );
 };

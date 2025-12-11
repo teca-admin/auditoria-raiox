@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { CheckCircle2, AlertCircle, RotateCcw, UserCheck, Users, UserX, AlertTriangle, Play } from 'lucide-react';
 import { AppState, AuditStats } from './types';
@@ -33,10 +34,10 @@ const App: React.FC = () => {
   return (
     <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden font-sans">
       
-      {/* Background Layer */}
+      {/* Background Layer - Native Canvas Sparkles (No external libs) */}
       <div className="w-full absolute inset-0 h-full">
         <SparklesCore
-          id="tsparticlesfullpage"
+          id="sparkles-bg"
           background="transparent"
           minSize={0.6}
           maxSize={1.4}
@@ -173,7 +174,7 @@ const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="text-neutral-700 text-[10px] font-medium uppercase tracking-wider absolute bottom-4 w-full text-center z-10">
-          © {new Date().getFullYear()} Teca Admin • v1.0
+          © {new Date().getFullYear()} Teca Admin • v1.2
         </footer>
       </div>
     </div>

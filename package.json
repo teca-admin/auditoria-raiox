@@ -14,10 +14,7 @@
     "lucide-react": "^0.559.0",
     "simplex-noise": "4.0.1",
     "clsx": "latest",
-    "tailwind-merge": "latest",
-    "@tsparticles/react": "3.0.0",
-    "@tsparticles/engine": "3.0.0",
-    "@tsparticles/slim": "3.0.0"
+    "tailwind-merge": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
