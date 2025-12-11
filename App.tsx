@@ -1,10 +1,12 @@
-
 import React, { useState, useCallback } from 'react';
-import { Play, CheckCircle2, AlertCircle, RotateCcw, UserCheck, Users, UserX, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, RotateCcw, UserCheck, Users, UserX, AlertTriangle, Play } from 'lucide-react';
 import { AppState, AuditStats } from './types';
 import { triggerAudit } from './services/auditService';
 import { StatCard } from './components/StatCard';
 import { LoadingView } from './components/LoadingView';
+import { SplineScene } from './components/SplineScene';
+import { SparklesCore } from './components/SparklesCore';
+import { Logo } from './components/Logo';
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
@@ -13,8 +15,6 @@ const App: React.FC = () => {
   const handleStartAudit = useCallback(async () => {
     setAppState(AppState.LOADING);
     
-    // A lógica de espera (15s) agora está DENTRO do triggerAudit
-    // para garantir que só buscaremos os dados DEPOIS desse tempo.
     try {
       const data = await triggerAudit();
       setStats(data);
@@ -31,124 +31,151 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500">
+    <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden font-sans">
       
-      {/* Header - Only visible when NOT in success state */}
-      {appState !== AppState.SUCCESS && (
-        <header className="mb-12 text-center space-y-2 animate-scale-in">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Sistema de auditoria de raio-x
-          </h2>
-          {appState === AppState.IDLE && (
-            <p className="text-slate-500 text-lg">Toque abaixo para iniciar o processo de verificação.</p>
-          )}
-        </header>
-      )}
+      {/* Background Layer */}
+      <div className="w-full absolute inset-0 h-full">
+        <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={100}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+        />
+      </div>
 
-      {/* Main Content Area */}
-      <main className="w-full max-w-3xl flex flex-col items-center justify-center flex-grow transition-all duration-500">
+      {/* Logo - Always visible in top left */}
+      <div className="absolute top-8 left-8 z-50 animate-scale-in">
+        <Logo />
+      </div>
+
+      {/* Content Layer */}
+      <div className="relative z-20 w-full h-full flex flex-col items-center justify-center pointer-events-none">
         
-        {/* STATE: IDLE */}
-        {appState === AppState.IDLE && (
-          <div className="mt-8 animate-scale-in">
-            <button
-              onClick={handleStartAudit}
-              className="group relative w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex flex-col items-center justify-center transition-all duration-300 shadow-2xl hover:shadow-emerald-500/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-200"
-            >
-              <div className="absolute inset-0 rounded-full border-4 border-white/20 scale-95 group-hover:scale-100 transition-transform duration-500"></div>
-              <Play className="w-16 h-16 sm:w-20 sm:h-20 mb-4 fill-current ml-2" />
-              <span className="text-xl sm:text-2xl font-bold tracking-wide">Iniciar auditoria</span>
-            </button>
-          </div>
-        )}
+        <main className="w-full flex flex-col items-center justify-center relative pointer-events-auto">
+          
+          {/* STATE: IDLE */}
+          {appState === AppState.IDLE && (
+            <div className="relative w-full h-screen flex items-center justify-center">
+              {/* Background Spline Robot (Visual Context) */}
+              <div className="absolute inset-0 w-full h-full z-10 opacity-60">
+                 <SplineScene 
+                    scene="https://prod.spline.design/kZDDjO5HuC9GJq2n/scene.splinecode" 
+                    className="w-full h-full"
+                  />
+              </div>
 
-        {/* STATE: LOADING */}
-        {appState === AppState.LOADING && (
-          <LoadingView />
-        )}
+              {/* Centered Interaction Button - Purple Play Triangle */}
+              <div className="relative z-30 animate-scale-in">
+                <button 
+                  onClick={handleStartAudit}
+                  className="group relative flex flex-col items-center justify-center gap-6 focus:outline-none transition-transform duration-300 active:scale-95"
+                >
+                  {/* Play Icon */}
+                  <div className="relative">
+                    <Play 
+                        className="w-32 h-32 text-[#8b5cf6] fill-[#8b5cf6] filter drop-shadow-[0_0_20px_rgba(139,92,246,0.6)] group-hover:drop-shadow-[0_0_40px_rgba(139,92,246,0.8)] transition-all duration-500" 
+                        strokeWidth={0}
+                    />
+                  </div>
 
-        {/* STATE: SUCCESS */}
-        {appState === AppState.SUCCESS && stats && (
-          <div className="w-full flex flex-col items-center space-y-8 animate-scale-in pt-6">
-            
-            <div className="text-center space-y-2 mb-2">
-              <h2 className="text-3xl font-bold text-emerald-600 flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-9 h-9" />
-                Auditoria concluída
-              </h2>
+                  {/* Text */}
+                  <span className="text-white font-bold text-2xl tracking-widest uppercase font-sans drop-shadow-lg group-hover:text-white/90">
+                    Iniciar Auditoria
+                  </span>
+                </button>
+              </div>
             </div>
+          )}
 
-            <div className="w-full max-w-md flex flex-col gap-4">
-              
-              {/* Card 1: Presenças Auditadas (Teal) */}
-              <StatCard 
-                label="Presenças auditadas" 
-                value={stats.total} 
-                className="bg-emerald-50 text-emerald-900 shadow-emerald-100/50 border border-emerald-100"
-                iconColor="text-emerald-600"
-                icon={Users}
-                delay={100}
-              />
-              
-              {/* Card 2: Presenças Validadas (Violet) */}
-              <StatCard 
-                label="Presenças validadas" 
-                value={stats.validated} 
-                className="bg-[#A78BFA] text-white shadow-violet-200" 
-                icon={UserCheck}
-                delay={200}
-              />
-              
-              {/* Card 3: Presenças NÃO validadas (Red) */}
-              <StatCard 
-                label="Presenças NÃO validadas" 
-                value={stats.invalid} 
-                className="bg-[#F87171] text-white shadow-red-200" 
-                icon={UserX}
-                delay={300}
-              />
-
-              {/* Card 4: Percentual de Não Conformidade (Orange) */}
-              <StatCard 
-                label="Percentual de não conformidade" 
-                value={`${stats.nonComplianceRate.toFixed(2).replace('.', ',')}%`}
-                className="bg-orange-400 text-white shadow-orange-200" 
-                icon={AlertTriangle}
-                delay={400}
-              />
+          {/* STATE: LOADING */}
+          {appState === AppState.LOADING && (
+            <div className="relative z-30">
+              <LoadingView />
             </div>
+          )}
 
-            <button 
-              onClick={handleReset}
-              className="mt-6 flex items-center gap-2 text-slate-400 hover:text-emerald-600 transition-colors px-6 py-3 rounded-full hover:bg-emerald-50 font-medium"
-            >
-              <RotateCcw className="w-5 h-5" />
-              Nova Auditoria
-            </button>
-          </div>
-        )}
+          {/* STATE: SUCCESS */}
+          {appState === AppState.SUCCESS && stats && (
+            <div className="w-full flex flex-col items-center space-y-6 animate-scale-in z-30 mt-12">
+              
+              <div className="text-center space-y-1 mb-2">
+                <h2 className="text-2xl font-bold text-white flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  Auditoria concluída
+                </h2>
+              </div>
 
-        {/* STATE: ERROR */}
-        {appState === AppState.ERROR && (
-          <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-xl border border-red-100 animate-scale-in">
-            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Erro na Auditoria</h3>
-            <p className="text-slate-500 mb-6">Não foi possível conectar ao servidor de auditoria. Verifique sua conexão e tente novamente.</p>
-            <button
-              onClick={handleReset}
-              className="bg-slate-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
-            >
-              Tentar Novamente
-            </button>
-          </div>
-        )}
+              {/* Grid Layout for Cards */}
+              <div className="w-full max-w-[280px] flex flex-col gap-3">
+                <StatCard 
+                  label="Presenças auditadas" 
+                  value={stats.total} 
+                  icon={Users}
+                  delay={100}
+                />
+                
+                <StatCard 
+                  label="Presenças validadas" 
+                  value={stats.validated} 
+                  icon={UserCheck}
+                  iconColor="text-emerald-400"
+                  delay={200}
+                />
+                
+                <StatCard 
+                  label="Presenças NÃO validadas" 
+                  value={stats.invalid} 
+                  icon={UserX}
+                  iconColor="text-red-400"
+                  delay={300}
+                />
 
-      </main>
+                <StatCard 
+                  label="Taxa de não conformidade" 
+                  value={`${stats.nonComplianceRate.toFixed(2).replace('.', ',')}%`}
+                  icon={AlertTriangle}
+                  iconColor="text-orange-400"
+                  delay={400}
+                />
+              </div>
 
-      {/* Footer */}
-      <footer className="mt-12 text-slate-400 text-sm font-medium">
-        © {new Date().getFullYear()} Teca Admin • Sistema v1.0
-      </footer>
+              <button 
+                onClick={handleReset}
+                className="mt-6 flex items-center gap-2 text-neutral-500 hover:text-white transition-all px-6 py-2 rounded-full border border-transparent hover:border-white/10 hover:bg-white/5 font-medium text-xs uppercase tracking-widest"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Nova Auditoria
+              </button>
+            </div>
+          )}
+
+          {/* STATE: ERROR */}
+          {appState === AppState.ERROR && (
+            <div className="text-center max-w-xs p-6 bg-neutral-900/50 backdrop-blur-xl rounded-2xl border border-white/10 animate-scale-in z-30">
+              <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-white mb-2">Falha na Conexão</h3>
+              <p className="text-neutral-400 text-xs mb-5 leading-relaxed">
+                Não foi possível conectar ao servidor. Verifique sua conexão.
+              </p>
+              <button
+                onClick={handleReset}
+                className="bg-white text-black px-6 py-2 rounded-full text-xs font-bold hover:bg-neutral-200 transition-colors"
+              >
+                Tentar Novamente
+              </button>
+            </div>
+          )}
+
+        </main>
+
+        {/* Footer */}
+        <footer className="text-neutral-700 text-[10px] font-medium uppercase tracking-wider absolute bottom-4 w-full text-center z-10">
+          © {new Date().getFullYear()} Teca Admin • v1.0
+        </footer>
+      </div>
     </div>
   );
 };

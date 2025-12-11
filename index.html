@@ -6,6 +6,7 @@
     <title>Sistema de Auditoria Raio-X</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.59/build/spline-viewer.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -33,13 +34,18 @@
     "react/": "https://esm.sh/react@^19.2.1/",
     "react": "https://esm.sh/react@^19.2.1",
     "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.559.0"
+    "lucide-react": "https://esm.sh/lucide-react@^0.559.0",
+    "simplex-noise": "https://esm.sh/simplex-noise@4.0.1",
+    "clsx": "https://esm.sh/clsx",
+    "tailwind-merge": "https://esm.sh/tailwind-merge",
+    "@tsparticles/react": "https://esm.sh/@tsparticles/react@3.0.0",
+    "@tsparticles/engine": "https://esm.sh/@tsparticles/engine@3.0.0",
+    "@tsparticles/slim": "https://esm.sh/@tsparticles/slim@3.0.0"
   }
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+  <body class="bg-black text-white antialiased selection:bg-emerald-900 selection:text-white">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
