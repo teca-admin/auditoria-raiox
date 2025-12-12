@@ -1,13 +1,9 @@
-
 import React, { useState, useCallback } from 'react';
 import { CheckCircle2, AlertCircle, RotateCcw, UserCheck, Users, UserX, AlertTriangle, Play } from 'lucide-react';
 import { AppState, AuditStats } from './types';
 import { triggerAudit } from './services/auditService';
 import { StatCard } from './components/StatCard';
 import { LoadingView } from './components/LoadingView';
-import { SplineScene } from './components/SplineScene';
-import { SparklesCore } from './components/SparklesCore';
-import { Logo } from './components/Logo';
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
@@ -32,26 +28,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden font-sans">
+    <div className="h-screen relative w-full bg-[#000208] flex flex-col items-center justify-center overflow-hidden font-sans">
       
-      {/* Background Layer - Native Canvas Sparkles (No external libs) */}
-      <div className="w-full absolute inset-0 h-full">
-        <SparklesCore
-          id="sparkles-bg"
-          background="transparent"
-          minSize={0.6}
-          maxSize={1.4}
-          particleDensity={100}
-          className="w-full h-full"
-          particleColor="#FFFFFF"
-        />
-      </div>
-
-      {/* Logo - Always visible in top left */}
-      <div className="absolute top-8 left-8 z-50 animate-scale-in">
-        <Logo />
-      </div>
-
       {/* Content Layer */}
       <div className="relative z-20 w-full h-full flex flex-col items-center justify-center pointer-events-none">
         
@@ -60,15 +38,8 @@ const App: React.FC = () => {
           {/* STATE: IDLE */}
           {appState === AppState.IDLE && (
             <div className="relative w-full h-screen flex items-center justify-center">
-              {/* Background Spline Robot (Visual Context) */}
-              <div className="absolute inset-0 w-full h-full z-10 opacity-60">
-                 <SplineScene 
-                    scene="https://prod.spline.design/kZDDjO5HuC9GJq2n/scene.splinecode" 
-                    className="w-full h-full"
-                  />
-              </div>
-
-              {/* Centered Interaction Button - Purple Play Triangle */}
+              
+              {/* Centered Interaction Button */}
               <div className="relative z-30 animate-scale-in">
                 <button 
                   onClick={handleStartAudit}
@@ -77,7 +48,7 @@ const App: React.FC = () => {
                   {/* Play Icon */}
                   <div className="relative">
                     <Play 
-                        className="w-32 h-32 text-[#8b5cf6] fill-[#8b5cf6] filter drop-shadow-[0_0_20px_rgba(139,92,246,0.6)] group-hover:drop-shadow-[0_0_40px_rgba(139,92,246,0.8)] transition-all duration-500" 
+                        className="w-32 h-32 text-[#d9dbdf] fill-[#d9dbdf] filter drop-shadow-[0_0_20px_rgba(217,219,223,0.3)] group-hover:drop-shadow-[0_0_40px_rgba(217,219,223,0.5)] transition-all duration-500" 
                         strokeWidth={0}
                     />
                   </div>
@@ -174,7 +145,7 @@ const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="text-neutral-700 text-[10px] font-medium uppercase tracking-wider absolute bottom-4 w-full text-center z-10">
-          © {new Date().getFullYear()} Teca Admin • v1.3
+          © {new Date().getFullYear()} Teca Admin • v1.5
         </footer>
       </div>
     </div>
