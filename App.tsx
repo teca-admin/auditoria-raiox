@@ -43,18 +43,18 @@ const App: React.FC = () => {
               <div className="relative z-30 animate-scale-in">
                 <button 
                   onClick={handleStartAudit}
-                  className="group relative flex flex-col items-center justify-center gap-6 focus:outline-none transition-transform duration-300 active:scale-95"
+                  className="group relative flex flex-col items-center justify-center gap-4 focus:outline-none transition-transform duration-300 active:scale-95"
                 >
                   {/* Play Icon */}
                   <div className="relative">
                     <Play 
-                        className="w-32 h-32 text-[#d9dbdf] fill-[#d9dbdf] filter drop-shadow-[0_0_20px_rgba(217,219,223,0.3)] group-hover:drop-shadow-[0_0_40px_rgba(217,219,223,0.5)] transition-all duration-500" 
+                        className="w-20 h-20 text-[#d9dbdf] fill-[#d9dbdf] transition-all duration-500" 
                         strokeWidth={0}
                     />
                   </div>
 
                   {/* Text */}
-                  <span className="text-white font-bold text-2xl tracking-widest uppercase font-sans drop-shadow-lg group-hover:text-white/90">
+                  <span className="text-white font-bold text-sm tracking-widest uppercase font-sans drop-shadow-lg group-hover:text-white/90">
                     Iniciar Auditoria
                   </span>
                 </button>
@@ -145,7 +145,7 @@ const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="text-neutral-700 text-[10px] font-medium uppercase tracking-wider absolute bottom-4 w-full text-center z-10">
-          © {new Date().getFullYear()} Teca Admin • v1.5
+          © {new Date().getFullYear()} Teca Admin • v1.6
         </footer>
       </div>
     </div>
